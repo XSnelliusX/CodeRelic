@@ -1,0 +1,6 @@
+*.docx
+*.pptx
+*.pdf
+
+# MacOS
+*.DS_Store
