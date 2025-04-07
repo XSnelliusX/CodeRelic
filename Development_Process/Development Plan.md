@@ -1,10 +1,10 @@
 **CodeRelic - Development Plan**
 
-**Version:** 1.0
-**Date:** 04/05/2025
+**Version: 1.1**
+**Date:** 04/06/2025
 **Status:** Draft
-**Related PRS Version:** 1.0
-**Related TDD Version:** 1.0
+**Related PRS Version:** 1.1
+**Related TDD Version:** 1.1
 
 **Table of Contents:**
 
@@ -29,7 +29,8 @@
 5.  Coding Standards
     5.1 General Principles
     5.2 Language-Specific Standards
-    5.3 Enforcement
+    5.3 AI/LLM Interaction Guidelines
+    5.4 Enforcement
 6.  Build Process
     6.1 Tools
     6.2 Build Steps per Service Type
@@ -98,7 +99,7 @@ Standard Scrum ceremonies will be observed:
 *   **Platform:** [TBD, e.g., GitLab, GitHub, Bitbucket] will host the Git repositories.
 
 **3.2 Repository Structure**
-*   **Approach:** A **Multi-repository** structure will be adopted. Each microservice (e.g., `project-management-service`, `parsing-service-rust`, `frontend-ui`) will reside in its own dedicated Git repository.
+*   **Approach:** A **Multi-repository** structure will be adopted. Each microservice (e.g., `project-management-service`, `parsing-service-rust`, `frontend-ui`, `legacy-documentation-service`) will reside in its own dedicated Git repository.
 *   **Rationale:** Simplifies build pipelines per service, allows independent versioning and deployment cycles, better accommodates the diverse technology stack. Requires good cross-repo coordination for integration.
 
 **3.3 Branching Strategy**
@@ -136,7 +137,7 @@ Reviewers should focus on:
 *   **Standards Compliance:** Does the code adhere to established coding standards and patterns?
 *   **Testing:** Are there adequate unit tests? Do they cover the changes?
 *   **Security:** Are there any obvious security vulnerabilities introduced? (Leverage automated tools first).
-*   **Performance:** Are there any apparent performance bottlenecks?
+*   **Performance:** Are there any apparent performance bottlenecks? (Consider LLM call efficiency).
 *   **Feedback:** Provide constructive, actionable feedback promptly.
 
 **5. Coding Standards**
@@ -153,10 +154,19 @@ Reviewers should focus on:
 *   **Rust:** Adhere strictly to `rustfmt` formatting. Use **Clippy** for comprehensive linting. Follow standard Rust idioms and leverage the type system for safety.
 *   **TypeScript/React:** Use **Prettier** for automated formatting. Use **ESLint** with a standard configuration (e.g., combination of `eslint:recommended`, React recommended, TypeScript recommended, potentially Airbnb style guide) for linting.
 
-**5.3 Enforcement**
+**5.3 AI/LLM Interaction Guidelines**
+*   **Prompt Engineering:** Develop clear, concise, and well-structured prompts for LLM interactions (e.g., for documentation generation). Include sufficient context from the IR/analysis. Parameterize prompts where possible.
+*   **Configuration:** Store LLM endpoint details, API keys, and potentially prompt templates externally (e.g., K8s Secrets/ConfigMaps), not hardcoded.
+*   **Error Handling:** Implement robust error handling for LLM API calls (timeouts, rate limits, API errors, invalid responses). Include retry logic for transient errors.
+*   **Variability:** Design code to handle variability in LLM responses gracefully. Avoid relying on exact phrasing where possible; focus on extracting key information or intent.
+*   **Context Management:** Be mindful of context window limitations for LLM calls. Implement strategies for chunking or summarizing input if necessary.
+*   **Testing:** Mock LLM interactions during unit/component testing to ensure deterministic tests. Integration tests should target actual (test) LLM endpoints.
+
+**5.4 Enforcement**
 *   **Automation:** Linters and formatters will be integrated into:
     *   **Pre-commit Hooks:** (Optional, but highly recommended) To check/fix code before committing locally.
     *   **CI Pipeline:** Mandatory checks in the CI pipeline will fail the build if standards are violated.
+*   **Code Reviews:** Adherence to general principles and AI/LLM guidelines checked during code review.
 
 **6. Build Process**
 
@@ -268,6 +278,7 @@ Reviewers should focus on:
 **10.1 Container Image Registry**
 *   **Purpose:** Store and distribute CodeRelic Docker images.
 *   **Tool:** A private Docker Registry is required ([TBD: e.g., Harbor, GitLab Registry, GitHub Packages, AWS ECR, Google Artifact Registry - depends on infrastructure choices]).
+*   **Artifacts:** Includes Docker images for all microservices.
 *   **Tagging Strategy:**
     *   Images built from `develop` branch: Tagged with commit SHA and `dev`.
     *   Images built from `main`/`release` branches/tags: Tagged with Git tag (e.g., `v1.0.0`), commit SHA, and potentially `latest` (use `latest` with caution).
@@ -275,6 +286,7 @@ Reviewers should focus on:
 **10.2 Helm Chart Repository**
 *   **Purpose:** Store and distribute the CodeRelic Helm chart for customer deployment.
 *   **Tool:** A Helm repository ([TBD: e.g., ChartMuseum, GitLab/GitHub Pages, cloud provider artifact storage]).
+* **Artifacts**: Helm chart package including deployment configurations for all services
 *   **Versioning:** Helm chart versions will align with CodeRelic application releases.
 
 **10.3 Versioning Strategy**
