@@ -1,5 +1,5 @@
 # CodeRelic
-
+![CodeRelic Logo](./images/CodeRelic_Logo_long.png)
 Welcome to the central documentation repository for the **CodeRelic** project.
 
 ## Project Introduction
@@ -41,6 +41,8 @@ These documents define the project's scope, requirements, and high-level technic
     *   ➡️ **[Technical Design Document (TDD)📄](./Planning_and_Design/Technical%20Design%20Document.md)**
 *   `[TODO]` **Architecture Documentation (Detailed Internal Structure):** Provides in-depth details about the internal structure and interactions within microservices.
     *   ➡️ **[Detailed Architecture Document📄](./Planning_and_Design/CodeRelic_Architecture_Detailed.md)**
+* `[✓]` **Persona (Aris Thorne):** Represents the target user profile driving design and requirements.
+    *   ➡️ **[Persona - Aris Thorne📄](./Planning_and_Design/CodeRelic_Persona_Aris_Thorne.md)**
 
 ### II. Development Process Documents
 
